@@ -58,8 +58,8 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             SettingsItem(
-                title = "테이블 포맷",
-                description = if (isTableFormat) "테이블 형식" else "목록 형식",
+                title = "모바일 친화 모드",
+                description = "테이블을 목록 형식으로 표시합니다",
                 icon = { Icon(Icons.Outlined.ViewWeek, contentDescription = null) },
                 action = {
                     Switch(checked = isTableFormat, onCheckedChange = onTableFormatChanged)

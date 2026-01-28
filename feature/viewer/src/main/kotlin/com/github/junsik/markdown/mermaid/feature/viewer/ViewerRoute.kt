@@ -51,13 +51,14 @@ fun ViewerRoute(
     viewModel: ViewerViewModel = hiltViewModel(),
     uriString: String,
     isDark: Boolean,
+    isTableFormat: Boolean = false,
     onBackClick: () -> Unit,
     onNavigateToDocument: ((String) -> Unit)? = null
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(uriString) {
-        viewModel.loadDocument(uriString)
+    LaunchedEffect(uriString, isTableFormat) {
+        viewModel.loadDocument(uriString, isTableFormat)
     }
 
     when (val state = uiState) {

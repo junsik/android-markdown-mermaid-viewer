@@ -100,6 +100,7 @@ fun MarkdownMermaidApp(
             ViewerRoute(
                 uriString = uriString,
                 isDark = isDarkTheme,
+                isTableFormat = isTableFormat,
                 onBackClick = { navController.popBackStack() },
                 onNavigateToDocument = { linkedUri ->
                     navController.navigate("viewer/${encodeUri(linkedUri)}")

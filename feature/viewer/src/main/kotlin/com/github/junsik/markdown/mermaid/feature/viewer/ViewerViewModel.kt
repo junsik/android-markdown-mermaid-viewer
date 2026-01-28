@@ -22,13 +22,13 @@ class ViewerViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<ViewerUiState>(ViewerUiState.Loading)
     val uiState = _uiState.asStateFlow()
 
-    fun loadDocument(uriString: String) {
+    fun loadDocument(uriString: String, isTableFormat: Boolean = false) {
         viewModelScope.launch {
             _uiState.value = ViewerUiState.Loading
             try {
                 val markdown = documentRepository.readDocument(uriString)
                 val html = withContext(Dispatchers.Default) {
-                    markdownRenderer.render(markdown)
+                    markdownRenderer.render(markdown, convertTableToList = isTableFormat)
                 }
                 _uiState.value = ViewerUiState.Success(html)
 
