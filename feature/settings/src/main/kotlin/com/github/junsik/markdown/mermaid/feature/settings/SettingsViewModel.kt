@@ -18,8 +18,16 @@ class SettingsViewModel @Inject constructor(
     private val _isDarkTheme = MutableStateFlow(prefs.getBoolean("dark_theme", false))
     val isDarkTheme = _isDarkTheme.asStateFlow()
 
+    private val _isTableFormat = MutableStateFlow(prefs.getBoolean("table_format", false))
+    val isTableFormat = _isTableFormat.asStateFlow()
+
     fun onThemeChanged(isDark: Boolean) {
         _isDarkTheme.value = isDark
         prefs.edit().putBoolean("dark_theme", isDark).apply()
+    }
+
+    fun onTableFormatChanged(isTable: Boolean) {
+        _isTableFormat.value = isTable
+        prefs.edit().putBoolean("table_format", isTable).apply()
     }
 }

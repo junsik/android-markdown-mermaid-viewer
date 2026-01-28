@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.github.junsik.markdown.mermaid.data"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 26

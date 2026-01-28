@@ -6,6 +6,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.ViewWeek
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,6 +20,8 @@ import androidx.compose.ui.unit.sp
 fun SettingsScreen(
     isDarkTheme: Boolean,
     onThemeChanged: (Boolean) -> Unit,
+    isTableFormat: Boolean,
+    onTableFormatChanged: (Boolean) -> Unit,
     onBackClick: () -> Unit
 ) {
     Scaffold(
@@ -49,6 +52,17 @@ fun SettingsScreen(
                 icon = { Icon(Icons.Outlined.DarkMode, contentDescription = null) },
                 action = {
                     Switch(checked = isDarkTheme, onCheckedChange = onThemeChanged)
+                }
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            SettingsItem(
+                title = "테이블 포맷",
+                description = if (isTableFormat) "테이블 형식" else "목록 형식",
+                icon = { Icon(Icons.Outlined.ViewWeek, contentDescription = null) },
+                action = {
+                    Switch(checked = isTableFormat, onCheckedChange = onTableFormatChanged)
                 }
             )
 

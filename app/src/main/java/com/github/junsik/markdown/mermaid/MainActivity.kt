@@ -41,12 +41,15 @@ class MainActivity : ComponentActivity() {
         setContent {
             val settingsViewModel: SettingsViewModel = hiltViewModel()
             val isDarkTheme by settingsViewModel.isDarkTheme.collectAsStateWithLifecycle()
+            val isTableFormat by settingsViewModel.isTableFormat.collectAsStateWithLifecycle()
 
             PremiumTheme(darkTheme = isDarkTheme) {
                 MarkdownMermaidApp(
                     intentUri = intentUriString,
                     isDarkTheme = isDarkTheme,
-                    onThemeChanged = settingsViewModel::onThemeChanged
+                    onThemeChanged = settingsViewModel::onThemeChanged,
+                    isTableFormat = isTableFormat,
+                    onTableFormatChanged = settingsViewModel::onTableFormatChanged
                 )
             }
         }
@@ -63,7 +66,9 @@ fun decodeUri(encoded: String): String =
 fun MarkdownMermaidApp(
     intentUri: String? = null,
     isDarkTheme: Boolean = false,
-    onThemeChanged: (Boolean) -> Unit = {}
+    onThemeChanged: (Boolean) -> Unit = {},
+    isTableFormat: Boolean = false,
+    onTableFormatChanged: (Boolean) -> Unit = {}
 ) {
     val navController = rememberNavController()
 
@@ -106,6 +111,8 @@ fun MarkdownMermaidApp(
             SettingsRoute(
                 isDarkTheme = isDarkTheme,
                 onThemeChanged = onThemeChanged,
+                isTableFormat = isTableFormat,
+                onTableFormatChanged = onTableFormatChanged,
                 onBackClick = { navController.popBackStack() }
             )
         }

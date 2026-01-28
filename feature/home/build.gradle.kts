@@ -1,22 +1,20 @@
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    alias(libs.plugins.jetbrainsKotlinCompose)
     alias(libs.plugins.dagger.hilt.android)
     alias(libs.plugins.ksp)
 }
 
 android {
     namespace = "com.github.junsik.markdown.mermaid.feature.home"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 26
     }
     buildFeatures {
         compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.8"
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
