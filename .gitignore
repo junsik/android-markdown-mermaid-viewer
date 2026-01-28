@@ -1,1 +1,37 @@
-.archives
+*.iml
+.gradle
+/local.properties
+/.idea/
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+
+# Android Studio Navigation Editor
+.navigation/
+
+# Gradle
+.gradle/
+build/
+app/build/
+renderer/build/
+core/build/
+data/build/
+domain/build/
+feature/home/build/
+feature/viewer/build/
+feature/settings/build/
+
+# Kotlin
+.kotlin/
+
+# Claude
+.claude/
+
+# Archives
+.archives/
+
+# Misc
+nul

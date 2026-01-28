@@ -1,115 +1,135 @@
-# PRD — Android Markdown Viewer (Mermaid Mobile Adaptive)
-- Version: 1.0 (MVP 설계 완료)
-- Date: 2026-01-27
-- Platform: Android
-- Primary Goal: Markdown 문서 뷰잉 + Mermaid 렌더링 + 모바일 친화(자동 방향/확대/테마 동기화)
-
----
+# PRD: Android Markdown Viewer with Mermaid (Mobile Adaptive)
 
 ## 1. 제품 개요
-Android에서 로컬/공유된 Markdown(.md) 문서를 열어 읽을 수 있는 뷰어 앱을 만든다. 문서 내 Mermaid 코드블록(````mermaid`)을 렌더링하며, **모바일 화면 폭/회전/다크모드**에 맞춰 Mermaid 다이어그램을 **자동 최적화(방향 전환 + 확대 뷰 + 테마 동기화)** 한다.
+Android에서 로컬/외부 마크다운(.md) 문서를 열어 읽을 수 있는 뷰어 앱을 만든다.
+문서 내 Mermaid 다이어그램을 렌더링하며, 모바일 화면 크기/가로세로 전환/다크모드에 맞춰
+Mermaid 그래프 방향 및 테마를 자동 최적화한다.
 
----
+## 2. 목표(Goals)
+- Markdown 문서를 "읽기 좋은" 형태로 렌더링 (코드블록, 표, 체크리스트, 이미지, 링크)
+- Mermaid 코드블록(````mermaid`)을 즉시 렌더링
+- 모바일 화면에서 다이어그램이 잘리지 않도록
+  - 방향(TB/LR) 자동 조정 또는 스케일/스크롤 최적화
+- 시스템 테마(라이트/다크) 변경 시 Mermaid 포함 전체 렌더링이 자연스럽게 동기화
 
-## 2. 목표 (Goals)
-- G1. Markdown 파일을 안정적으로 렌더링한다 (GFM 일부 포함)
-- G2. Mermaid `graph/flowchart`를 SVG로 렌더링한다
-- G3. 좁은 화면에서 다이어그램이 잘리지 않도록 **자동 방향 전환(조건부) + 확대/줌** 제공
-- G4. 시스템 테마(라이트/다크) 변경 시 Markdown + Mermaid가 함께 자연스럽게 동기화
-- G5. 오프라인 기본 동작, 개인정보/문서 외부 전송 없음(기본 정책)
+## 3. 비목표(Non-goals)
+- Markdown 편집기(작성/편집)는 1차 범위에서 제외(읽기 중심)
+- Mermaid 외의 다이어그램(PlantUML 등)은 1차 범위에서 제외
+- Git/Repo 연동(프리뷰 자동 동기화 등)은 1차 범위에서 제외
 
----
-
-## 3. 비목표 (Non-goals)
-- Markdown 편집 기능(작성/수정)은 MVP 범위에서 제외
-- Git 동기화/Repository 브라우징 기능 제외
-- Mermaid 외 PlantUML 등 타 다이어그램 제외
-
----
-
-## 4. 사용자 & 시나리오
-### 4.1 타겟 사용자
+## 4. 타겟 사용자
 - 기술 문서를 모바일에서 자주 읽는 개발자/PM/기획자
-- Mermaid로 설계 문서를 작성/공유하는 사용자
+- PRD/설계 문서를 Mermaid로 작성하는 사용자
+- 로컬 파일/공유 파일로 마크다운을 주고받는 팀
 
-### 4.2 핵심 시나리오
-1) 파일 열기: SAF(Storage Access Framework)로 .md 선택 → 뷰어 표시  
-2) Mermaid 렌더: ` ```mermaid` 블록 자동 SVG 렌더  
-3) 좁은 화면 최적화: LR 그래프면 TB로 자동 변환(조건부) + 클릭 시 확대 뷰(핀치 줌)  
-4) 테마 동기화: 시스템 다크모드 변경 → Markdown/코드/mermaid 테마 동기화  
-5) 검색/TOC: 문서 내 검색, 목차 점프(옵션)
+## 5. 핵심 사용자 시나리오
+1) 파일 열기
+- 사용자가 "파일 열기" → SAF(Storage Access Framework)로 .md 선택 → 렌더링 화면 표시
 
----
+2) Mermaid 포함 문서 보기
+- ` ```mermaid ... ``` ` 블록을 SVG로 렌더링하여 본문에 삽입
+- 다이어그램이 화면 밖으로 나가면 자동으로 스케일/스크롤 처리
 
-## 5. 기능 요구사항 (Functional Requirements)
-### 5.1 문서 로딩
-- FR-LOAD-01: SAF로 로컬 파일(.md) 열기
-- FR-LOAD-02: 최근 문서(Recent) 목록 저장/표시 (URI + title + lastOpenedAt)
-- FR-LOAD-03: 권한 만료/URI 접근 실패 시 재승인 유도
-- FR-LOAD-04(후순위): URL로 markdown 열기(캐시)
+3) 다크모드 전환
+- 시스템 다크모드 ON/OFF 변경 시
+  - Markdown 테마, 코드 하이라이트, Mermaid 테마가 함께 변경
 
-### 5.2 Markdown 렌더링
-- FR-MD-01: CommonMark 기반 렌더 + GFM 일부(테이블/체크리스트)
-- FR-MD-02: 코드블록 렌더 + 하이라이팅(옵션)
-- FR-MD-03: 링크 클릭 시 외부 브라우저 열기(기본) / 인앱 WebView(옵션)
-- FR-MD-04: 이미지 렌더(가능한 범위 내), 실패 시 placeholder + 경로 표시
-- FR-MD-05: TOC 생성 및 섹션 점프(옵션)
-- FR-MD-06: 검색(Find in page)
+4) 모바일 최적화
+- 좁은 화면에서 LR 그래프가 읽기 어렵다면 TB로 자동 전환
+- 또는 다이어그램 영역에서 pinch zoom + pan 지원
 
-### 5.3 Mermaid 렌더링
-- FR-MER-01: ` ```mermaid` 코드블록 탐지 후 렌더
-- FR-MER-02: 렌더 실패 시 원본 코드 + 오류 메시지 표시
-- FR-MER-03: 렌더 결과는 SVG(텍스트 선명도/확대 친화)
-- FR-MER-04: 다이어그램 탭 시 확대(Focus View)
-- FR-MER-05: 테마 변경 시 Mermaid 재렌더(또는 reload)
+## 6. 기능 요구사항(Functional Requirements)
 
-### 5.4 모바일 최적화 (핵심)
-- FR-MOB-01: 자동 방향 전환(휴리스틱)  
-  - portrait & 좁은 폭에서 `graph/flowchart LR|RL` 을 TB로 치환(조건부)
-- FR-MOB-02: 확대 뷰에서 pinch zoom + pan
-- FR-MOB-03: 본문에서 기본은 fit-to-width, 필요 시 수평 스크롤 허용
+### 6.1 문서 로딩
+- 로컬 파일(.md) 열기 지원 (SAF)
+- 최근 열람 목록(Recent) 제공
+- 문서 내 상대경로 이미지 렌더링(가능 범위에서)
+- 외부 URL 열기(옵션): http(s) markdown 다운로드 후 렌더링 (후순위)
 
-### 5.5 설정
-- FR-SET-01: Theme mode (System/Light/Dark)
-- FR-SET-02: Font scale
-- FR-SET-03: Mermaid auto direction (ON/OFF)
-- FR-SET-04: Link open mode (External/In-app)
+### 6.2 Markdown 렌더링
+- CommonMark + GitHub-flavored 일부 지원(체크박스, 테이블 등)
+- 코드블록, 인라인 코드
+- 링크 탭 시 외부 브라우저 열기(기본) 또는 인앱 WebView(옵션)
+- 목차(TOC) 자동 생성(옵션)
+- 검색(Find in page)
 
----
+### 6.3 Mermaid 렌더링
+- Mermaid 코드블록 탐지 및 렌더링
+- 렌더 실패 시:
+  - 원본 코드블록 표시 + 오류 메시지/라인 정보(가능하면)
+- 렌더 결과는 SVG로 삽입 (텍스트 선명도 우선)
 
-## 6. 비기능 요구사항 (NFR)
-- NFR-01: 오프라인 동작(로컬 문서)
-- NFR-02: 문서 내용 외부 전송 없음(기본)
-- NFR-03: 안정성 — 렌더 실패는 graceful fallback
-- NFR-04: 성능 — p50 TTI 1.5s, p95 3.5s 목표(중간 문서 기준)
-- NFR-05: 최소 Android API: 28(권장) 이상
+### 6.4 모바일 화면 최적화(핵심)
+- 다이어그램 방향 자동 조정:
+  - 화면 폭이 좁을 때 LR → TB로 변환(조건 기반)
+  - 태블릿/가로모드 등 넓을 때 TB → LR 선호(옵션)
+- 다이어그램 뷰어 UX:
+  - 본문 내 기본은 "fit-to-width"
+  - 탭하면 "확대 보기" 모달/화면으로 전환(핀치 줌/패닝)
 
----
+### 6.5 테마/스타일
+- 시스템 테마 연동(다크/라이트)
+- Mermaid 테마 연동:
+  - light: default/neutral
+  - dark: dark
+  - 커스텀 팔레트(후순위)
+- 폰트 크기 조절(접근성)
+- 줄 간격/여백 프리셋 제공
 
-## 7. 성공 지표 (Metrics)
-- M1: TTI(p50/p95)
-- M2: Mermaid 렌더 성공률
-- M3: Crash-free sessions
-- M4: 최근 문서 재오픈율
+### 6.6 성능/캐싱
+- Mermaid 렌더 캐시(문서 hash + 블록 index 기반)
+- 대형 문서(100~300페이지급 md)에서도 스크롤이 끊기지 않게:
+  - 렌더링 파이프라인 최적화(점진 렌더/비동기)
 
----
+## 7. 비기능 요구사항(Non-functional Requirements)
+- 오프라인 동작(로컬 문서 기준)
+- 개인정보/문서 외부 전송 없음(기본 정책)
+- 크래시 없는 안정성(실패 시 graceful fallback)
+- 최소 지원 Android: 예) Android 9(API 28) 이상(조정 가능)
 
-## 8. 릴리즈 범위
-### MVP(v1.0)
-- SAF 파일 열기 + 최근 문서
-- Markdown 렌더(HTML/WebView 기반)
-- Mermaid 렌더(SVG) + 테마 동기화
-- 자동 방향 전환(대상 제한/휴리스틱)
-- 확대(Focus View) + pinch zoom
+## 8. UX/화면 구성
+- Home
+  - 최근 문서 리스트
+  - "파일 열기" CTA
+- Viewer
+  - 상단바: 파일명, 검색, TOC, 설정
+  - 본문: Markdown 렌더 + Mermaid 포함
+  - Mermaid 탭 시: Diagram Focus View(확대)
+- Settings
+  - 테마(시스템/라이트/다크)
+  - 폰트 크기
+  - 다이어그램 자동 방향 전환 ON/OFF
+  - 링크 열기 방식(외부/인앱)
+
+## 9. 에러 케이스/예외
+- 파일 권한 만료(SAF URI): 재승인 유도
+- Mermaid 파싱 오류: 원본 코드 표시 + 오류 안내
+- 이미지 로딩 실패: placeholder + 원본 경로 표시
+
+## 10. 성공 지표(Success Metrics)
+- 문서 오픈 → 첫 렌더 완료까지 TTI(초) (p50/p95)
+- Mermaid 렌더 성공률(%)
+- 크래시 프리 세션(%)
+- 재방문율(최근 문서 재오픈 비율)
+
+## 11. 릴리즈 범위 제안
+### MVP (v1)
+- 로컬 .md 열기(SAF)
+- Markdown 렌더
+- Mermaid 렌더(SVG)
+- 다크/라이트 동기화
+- 다이어그램 확대 보기(핀치 줌)
 
 ### v1.1
-- TOC + 검색 UX 개선
-- 문서별 설정 기억
-- URL 열기(캐시)
+- 자동 방향 전환(안정화)
+- 최근 목록/즐겨찾기
+- TOC
 
----
+### v1.2
+- 원격 URL 열기(캐시)
+- 커스텀 Mermaid theme variables
+- 문서별 설정(폰트/테마 기억)
 
-## 9. 리스크 & 대응
-- R1: Mermaid 렌더 네이티브 구현 부담 → WebView+local assets로 최소화
-- R2: 방향 변환 부작용 → 대상 제한(graph/flowchart), 잠금 옵션, 실패 시 원본 fallback
-- R3: 대형 문서 성능 → 캐시/점진 처리, reload 최소화
+## 12. 리스크
+- Mermaid 렌더를 네이티브로 완전 구현하기는 비용 큼 → WebView 기반이 현실적
+- "그래프 방향 자동 변환"은 문법 변형에 따른 부작용 가능 → 안전장치 필요(옵션 토글, 일부 케이스 제외)
