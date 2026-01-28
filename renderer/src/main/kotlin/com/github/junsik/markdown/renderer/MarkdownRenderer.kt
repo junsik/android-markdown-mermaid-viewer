@@ -48,47 +48,50 @@ class MarkdownRenderer {
      * 단일 table HTML을 목록 형식으로 변환
      */
     private fun convertTableToList(tableHtml: String): String {
-        val rows = tableHtml.split(Regex("""<tr.*?>.*?</tr>""", RegexOption.DOT_MATCHES_ALL))
-            .filter { it.contains("<th") || it.contains("<td") }
+        // 모든 <tr> 태그 찾기
+        val trPattern = Regex("""<tr[^>]*>(.*?)</tr>""", RegexOption.DOT_MATCHES_ALL)
+        val trMatches = trPattern.findAll(tableHtml).toList()
 
-        if (rows.isEmpty()) return tableHtml
+        if (trMatches.isEmpty()) return tableHtml
 
         val sb = StringBuilder()
-        sb.append("<div style=\"border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; margin: 1rem 0;\">")
+        sb.append("""<div style="border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; margin: 1rem 0;">""")
 
-        // 헤더 추출
-        val headerRow = rows.firstOrNull { it.contains("<th") }
-        val headers = if (headerRow != null) {
-            Regex("""<th[^>]*>(.*?)</th>""", RegexOption.DOT_MATCHES_ALL)
-                .findAll(headerRow)
-                .map { it.groupValues[1].trim() }
-                .toList()
-        } else {
-            emptyList()
-        }
+        // 첫 번째 행에서 헤더 추출
+        val firstRowContent = trMatches.firstOrNull()?.groupValues?.get(1) ?: return tableHtml
+        val headers = extractCells(firstRowContent, "th")
 
-        // 데이터 행들
-        val dataRows = rows.drop(if (headerRow != null) 1 else 0)
+        // 헤더가 없으면 첫 번째 행도 데이터로 처리
+        val dataStartIndex = if (headers.isNotEmpty()) 1 else 0
 
-        dataRows.forEach { row ->
-            val cells = Regex("""<td[^>]*>(.*?)</td>""", RegexOption.DOT_MATCHES_ALL)
-                .findAll(row)
-                .map { it.groupValues[1].trim() }
-                .toList()
+        // 데이터 행들 처리
+        trMatches.drop(dataStartIndex).forEach { match ->
+            val rowContent = match.groupValues[1]
+            val cells = extractCells(rowContent, "td")
 
-            sb.append("<div style=\"padding: 1rem; border-bottom: 1px solid #e2e8f0;\">")
+            if (cells.isNotEmpty()) {
+                sb.append("""<div style="padding: 1rem; border-bottom: 1px solid #e2e8f0;">""")
 
-            cells.forEachIndexed { index, cell ->
-                val header = if (index < headers.size) headers[index] else "Column ${index + 1}"
-                sb.append("<div style=\"margin-bottom: 0.5rem;\">")
-                sb.append("<strong>$header:</strong> $cell")
+                cells.forEachIndexed { index, cell ->
+                    val header = if (index < headers.size) headers[index] else "Column ${index + 1}"
+                    sb.append("""<div style="margin-bottom: 0.5rem;"><strong>$header:</strong> $cell</div>""")
+                }
+
                 sb.append("</div>")
             }
-
-            sb.append("</div>")
         }
 
         sb.append("</div>")
         return sb.toString()
+    }
+
+    /**
+     * 행(row)에서 셀(cell) 추출
+     */
+    private fun extractCells(rowContent: String, cellTag: String): List<String> {
+        val cellPattern = Regex("""<$cellTag[^>]*>(.*?)</$cellTag>""", RegexOption.DOT_MATCHES_ALL)
+        return cellPattern.findAll(rowContent)
+            .map { it.groupValues[1].trim() }
+            .toList()
     }
 }
