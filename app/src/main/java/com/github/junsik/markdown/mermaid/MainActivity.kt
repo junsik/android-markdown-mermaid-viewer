@@ -6,9 +6,13 @@ import android.os.Bundle
 import android.util.Base64
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavType
@@ -26,6 +30,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
 
         val intentUri = intent?.data
@@ -71,19 +76,32 @@ fun MarkdownMermaidApp(
     onTableFormatChanged: (Boolean) -> Unit = {}
 ) {
     val navController = rememberNavController()
+    var isSplashFinished by remember { mutableStateOf(false) }
 
-    // Intent URI가 있으면 home에서 시작 후 즉시 viewer로 이동 (back stack에 home 유지)
-    LaunchedEffect(intentUri) {
-        if (intentUri != null) {
-            navController.navigate("viewer/${encodeUri(intentUri)}")
-        }
-    }
+    // 외부 인텐트로 진입했는지 확인
+    val isExternalIntent = intentUri != null
 
     NavHost(
         navController = navController,
-        startDestination = "home"
+        startDestination = if (isExternalIntent) "home" else "splash"
     ) {
+        composable("splash") {
+            SplashScreen(onAnimationFinish = {
+                isSplashFinished = true
+                navController.navigate("home") {
+                    popUpTo("splash") { inclusive = true }
+                }
+            })
+        }
+
         composable("home") {
+            // 외부 인텐트로 홈에 진입하자마자 뷰어로 이동
+            LaunchedEffect(intentUri) {
+                if (intentUri != null) {
+                    navController.navigate("viewer/${encodeUri(intentUri)}")
+                }
+            }
+
             HomeRoute(
                 onDocumentClick = { doc ->
                     navController.navigate("viewer/${encodeUri(doc.uriString)}")
