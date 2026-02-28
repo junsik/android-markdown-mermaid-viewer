@@ -10,4 +10,7 @@ interface DocumentRepository {
     
     suspend fun readDocument(uriString: String): String
     fun getDisplayName(uriString: String): String?
+    
+    /** 외부 Uri를 내부 저장소로 복사하여 안정적인 접근을 보장한다. */
+    suspend fun cacheExternalFile(uriString: String): String
 }

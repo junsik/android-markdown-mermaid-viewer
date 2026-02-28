@@ -1,0 +1,49 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- 1. Outer Neon Glow (Scaled & Centered) -->
+    <path
+        android:strokeWidth="12"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:fillColor="#00000000"
+        android:strokeAlpha="0.15"
+        android:pathData="M 32,72 V 36 L 46,52 L 60,36 V 72 M 60,36 H 68 C 78,36 84,42 84,54 C 84,66 78,72 68,72 H 60">
+        <aapt:attr name="android:strokeColor">
+            <gradient
+                android:startX="32" android:startY="36" android:endX="84" android:endY="72"
+                android:type="linear">
+                <item android:color="#6366F1" android:offset="0" />
+                <item android:color="#EC4899" android:offset="1" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- 2. Main MD Stroke (Scaled & Centered) -->
+    <path
+        android:strokeWidth="9"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:fillColor="#00000000"
+        android:pathData="M 32,72 V 36 L 46,52 L 60,36 V 72 M 60,36 H 68 C 78,36 84,42 84,54 C 84,66 78,72 68,72 H 60">
+        <aapt:attr name="android:strokeColor">
+            <gradient
+                android:startX="32" android:startY="36" android:endX="84" android:endY="72"
+                android:type="linear">
+                <item android:color="#6366F1" android:offset="0" />
+                <item android:color="#EC4899" android:offset="1" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- 3. Diagram Nodes (Scaled & Centered) -->
+    <path android:fillColor="#FFFFFF" android:pathData="M 32,72 m -2.5,0 a 2.5,2.5 0 1,1 5,0 a 2.5,2.5 0 1,1 -5,0" />
+    <path android:fillColor="#FFFFFF" android:pathData="M 32,36 m -2.5,0 a 2.5,2.5 0 1,1 5,0 a 2.5,2.5 0 1,1 -5,0" />
+    <path android:fillColor="#FFFFFF" android:pathData="M 60,72 m -2.5,0 a 2.5,2.5 0 1,1 5,0 a 2.5,2.5 0 1,1 -5,0" />
+    <path android:fillColor="#FFFFFF" android:pathData="M 84,54 m -2.5,0 a 2.5,2.5 0 1,1 5,0 a 2.5,2.5 0 1,1 -5,0" />
+
+</vector>

@@ -22,7 +22,7 @@ Markdown 문서와 Mermaid 다이어그램을 렌더링하는 Android 뷰어 앱
 :core                 - 공통 유틸리티 (Dispatchers, Theme)
 :domain               - 도메인 레이어 (Model, Repository Interface)
 :data                 - 데이터 레이어 (Repository 구현, SharedPreferences)
-:feature:home         - 홈 화면 (최근 문서 목록, AdMob 배너)
+:feature:home         - 홈 화면 (최근 문서 목록)
 :feature:viewer       - 뷰어 화면 (WebView + Mermaid)
 :feature:settings     - 설정 화면 (다크 모드, 앱 정보)
 ```
@@ -33,7 +33,6 @@ Markdown 문서와 Mermaid 다이어그램을 렌더링하는 Android 뷰어 앱
 - **DI**: Hilt
 - **Rendering**: WebView + Flexmark-java + mermaid.min.js
 - **Storage**: SharedPreferences (JSON)
-- **Ads**: Google AdMob
 - **Min SDK**: 26 (Android 8.0)
 
 ## 빌드 및 실행

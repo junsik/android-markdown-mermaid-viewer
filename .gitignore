@@ -33,5 +33,9 @@ feature/settings/build/
 # Archives
 .archives/
 
+# Keystore files
+keystore.properties
+*.jks
+
 # Misc
 nul

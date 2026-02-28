@@ -36,4 +36,12 @@ class HomeViewModel @Inject constructor(
             )
         }
     }
+
+    suspend fun cacheDocument(uriString: String): String {
+        return documentRepository.cacheExternalFile(uriString)
+    }
+
+    fun getDisplayName(uriString: String): String? {
+        return documentRepository.getDisplayName(uriString)
+    }
 }

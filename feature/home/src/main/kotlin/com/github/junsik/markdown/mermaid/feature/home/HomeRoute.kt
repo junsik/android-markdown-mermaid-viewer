@@ -6,6 +6,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import kotlinx.coroutines.launch
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -19,29 +20,27 @@ fun HomeRoute(
 ) {
     val recentDocuments by viewModel.recentDocuments.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val scope = androidx.compose.runtime.rememberCoroutineScope()
 
     val filePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument()
     ) { uri: Uri? ->
         uri ?: return@rememberLauncherForActivityResult
-        // 영구 읽기 권한 획득
-        try {
-            context.contentResolver.takePersistableUriPermission(
-                uri, Intent.FLAG_GRANT_READ_URI_PERMISSION
+        
+        // [정석 해결] Compose Scope를 사용하여 비동기 캐싱 작업 수행
+        scope.launch {
+            val cachedUriString = viewModel.cacheDocument(uri.toString())
+            val title = viewModel.getDisplayName(cachedUriString) ?: "Untitled.md"
+            
+            onDocumentClick(
+                RecentDocument(
+                    id = cachedUriString.hashCode().toString(),
+                    uriString = cachedUriString,
+                    title = title,
+                    lastOpenedAt = System.currentTimeMillis()
+                )
             )
-        } catch (_: SecurityException) {
-            // 일부 provider는 persistable 권한을 지원하지 않음
         }
-        val title = uri.lastPathSegment?.substringAfterLast('/') ?: "Untitled.md"
-        viewModel.addDocument(uri.toString(), title)
-        onDocumentClick(
-            RecentDocument(
-                id = uri.toString().hashCode().toString(),
-                uriString = uri.toString(),
-                title = title,
-                lastOpenedAt = System.currentTimeMillis()
-            )
-        )
     }
 
     HomeScreen(

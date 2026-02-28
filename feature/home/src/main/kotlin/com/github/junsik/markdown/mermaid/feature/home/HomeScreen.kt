@@ -47,9 +47,6 @@ fun HomeScreen(
             FloatingActionButton(onClick = onOpenFileClick) {
                 Icon(Icons.Outlined.Add, contentDescription = "파일 열기")
             }
-        },
-        bottomBar = {
-            AdBanner()
         }
     ) { padding ->
         if (recentDocuments.isEmpty()) {
